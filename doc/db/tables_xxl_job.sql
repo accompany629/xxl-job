@@ -65,6 +65,32 @@ CREATE TABLE `xxl_job_info`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE `lobster_schedule_task`
+(
+    `id`                  bigint(20)   NOT NULL AUTO_INCREMENT,
+    `user_id`             bigint(20)   NOT NULL COMMENT '用户ID',
+    `lobster_id`          bigint(20)   NOT NULL COMMENT '龙虾资源ID',
+    `task_name`           varchar(128) DEFAULT NULL COMMENT '业务任务名称',
+    `message_content`     text         NOT NULL COMMENT '发送给龙虾的消息内容',
+    `schedule_type`       varchar(32)  NOT NULL COMMENT '业务调度类型：CRON、ONCE',
+    `cron_expr`           varchar(128) DEFAULT NULL COMMENT 'Cron表达式',
+    `execute_time`        datetime     DEFAULT NULL COMMENT '单次执行时间',
+    `timezone`            varchar(64)  DEFAULT NULL COMMENT '时区',
+    `xxl_job_id`          int(11)      DEFAULT NULL COMMENT '关联XXL-JOB任务ID',
+    `status`              tinyint(4)   NOT NULL DEFAULT '1' COMMENT '状态：0-停用，1-启用',
+    `deleted`             tinyint(4)   NOT NULL DEFAULT '0' COMMENT '删除标记：0-正常，1-删除',
+    `last_execute_time`   datetime     DEFAULT NULL COMMENT '最近执行时间',
+    `last_execute_status` varchar(32)  DEFAULT NULL COMMENT '最近执行状态',
+    `last_execute_msg`    varchar(512) DEFAULT NULL COMMENT '最近执行消息',
+    `created_at`          datetime     NOT NULL COMMENT '创建时间',
+    `updated_at`          datetime     NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_lobster_id` (`lobster_id`),
+    KEY `idx_xxl_job_id` (`xxl_job_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
 CREATE TABLE `xxl_job_logglue`
 (
     `id`          int(11)      NOT NULL AUTO_INCREMENT,

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.admin.mapper.LobsterScheduleTaskMapper">
+
+	<resultMap id="LobsterScheduleTask" type="com.xxl.job.admin.model.LobsterScheduleTask">
+		<result column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="lobster_id" property="lobsterId" />
+		<result column="task_name" property="taskName" />
+		<result column="message_content" property="messageContent" />
+		<result column="schedule_type" property="scheduleType" />
+		<result column="cron_expr" property="cronExpr" />
+		<result column="execute_time" property="executeTime" />
+		<result column="timezone" property="timezone" />
+		<result column="xxl_job_id" property="xxlJobId" />
+		<result column="status" property="status" />
+		<result column="deleted" property="deleted" />
+		<result column="last_execute_time" property="lastExecuteTime" />
+		<result column="last_execute_status" property="lastExecuteStatus" />
+		<result column="last_execute_msg" property="lastExecuteMsg" />
+		<result column="created_at" property="createdAt" />
+		<result column="updated_at" property="updatedAt" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.user_id,
+		t.lobster_id,
+		t.task_name,
+		t.message_content,
+		t.schedule_type,
+		t.cron_expr,
+		t.execute_time,
+		t.timezone,
+		t.xxl_job_id,
+		t.status,
+		t.deleted,
+		t.last_execute_time,
+		t.last_execute_status,
+		t.last_execute_msg,
+		t.created_at,
+		t.updated_at
+	</sql>
+
+	<insert id="save" parameterType="com.xxl.job.admin.model.LobsterScheduleTask" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO lobster_schedule_task (
+			user_id,
+			lobster_id,
+			task_name,
+			message_content,
+			schedule_type,
+			cron_expr,
+			execute_time,
+			timezone,
+			xxl_job_id,
+			status,
+			deleted,
+			created_at,
+			updated_at
+		) VALUES (
+			#{userId},
+			#{lobsterId},
+			#{taskName},
+			#{messageContent},
+			#{scheduleType},
+			#{cronExpr},
+			#{executeTime},
+			#{timezone},
+			#{xxlJobId},
+			#{status},
+			#{deleted},
+			#{createdAt},
+			#{updatedAt}
+		)
+	</insert>
+
+	<select id="listByUserId" resultMap="LobsterScheduleTask">
+		SELECT <include refid="Base_Column_List" />
+		FROM lobster_schedule_task AS t
+		WHERE t.user_id = #{userId}
+			AND t.deleted = 0
+		ORDER BY t.id DESC
+	</select>
+
+	<select id="loadById" resultMap="LobsterScheduleTask">
+		SELECT <include refid="Base_Column_List" />
+		FROM lobster_schedule_task AS t
+		WHERE t.id = #{id}
+	</select>
+
+	<select id="loadByIdAndUserId" resultMap="LobsterScheduleTask">
+		SELECT <include refid="Base_Column_List" />
+		FROM lobster_schedule_task AS t
+		WHERE t.id = #{id}
+			AND t.user_id = #{userId}
+			AND t.deleted = 0
+	</select>
+
+	<update id="update" parameterType="com.xxl.job.admin.model.LobsterScheduleTask">
+		UPDATE lobster_schedule_task
+		SET
+			lobster_id = #{lobsterId},
+			task_name = #{taskName},
+			message_content = #{messageContent},
+			schedule_type = #{scheduleType},
+			cron_expr = #{cronExpr},
+			execute_time = #{executeTime},
+			timezone = #{timezone},
+			status = #{status},
+			updated_at = #{updatedAt}
+		WHERE id = #{id}
+			AND user_id = #{userId}
+			AND deleted = 0
+	</update>
+
+	<update id="updateXxlJobId">
+		UPDATE lobster_schedule_task
+		SET xxl_job_id = #{xxlJobId},
+			updated_at = now()
+		WHERE id = #{id}
+			AND deleted = 0
+	</update>
+
+	<update id="updateStatus">
+		UPDATE lobster_schedule_task
+		SET status = #{status},
+			updated_at = now()
+		WHERE id = #{id}
+			AND user_id = #{userId}
+			AND deleted = 0
+	</update>
+
+	<update id="softDelete">
+		UPDATE lobster_schedule_task
+		SET deleted = 1,
+			updated_at = now()
+		WHERE id = #{id}
+			AND user_id = #{userId}
+			AND deleted = 0
+	</update>
+
+	<update id="updateLastExecuteResult">
+		UPDATE lobster_schedule_task
+		SET last_execute_time = now(),
+			last_execute_status = #{lastExecuteStatus},
+			last_execute_msg = #{lastExecuteMsg},
+			updated_at = now()
+		WHERE id = #{id}
+	</update>
+</mapper>
